@@ -1,4 +1,4 @@
-require "station"
+require "./lib/station"
 
 describe Station do
 subject(:station) { described_class.new("station",1) }
