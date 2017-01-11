@@ -32,4 +32,7 @@ describe Journey do
     journey.finish(bond)
     expect(journey.journey_complete?).to eq true
   end
+  it "has method #fare" do
+    expect(journey.respond_to?(:fare)).to eq true
+  end
 end

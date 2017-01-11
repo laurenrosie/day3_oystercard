@@ -13,4 +13,12 @@ class Journey
   def finish(finish_station)
     @exit_station = finish_station
   end
+
+  def fare
+    if @entry_station==nil || @exit_station == nil
+      6
+    else
+      1
+    end
+  end
 end
