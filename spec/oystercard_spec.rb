@@ -10,7 +10,7 @@ describe Oystercard do
   end
 
   it 'checks that the card has an empty list of journeys by default' do
-  expect(subject.journeys).to be_empty
+  expect(subject.journey_log.journeys).to be_empty
   end
 
   describe '#top_up' do
@@ -42,15 +42,15 @@ describe Oystercard do
     it "should change journey_status to true" do
       subject.top_up(Oystercard::MIN_BALANCE)
       subject.touch_in(station)
-     expect(subject.current_journey).not_to eq(nil)
+     expect(subject.journey_log.current_journey).not_to eq(nil)
     end
     it 'raises an error if balance unsufficient' do
-      expect{subject.touch_in("Bank")}.to raise_error "Unsuffient balance. Top up to at least #{Oystercard::MIN_BALANCE}!"
+      expect{subject.touch_in("Bank")}.to raise_error "Insufficient balance. Top up to at least #{Oystercard::MIN_BALANCE}!"
     end
     it "should allow the card to remember the station after touching in" do
       subject.top_up(Oystercard::MIN_BALANCE)
       subject.touch_in(station)
-      expect(subject.current_journey.entry_station).to eq(station)
+      expect(subject.journey_log.current_journey.entry_station).to eq(station)
     end
   end
 
@@ -60,7 +60,7 @@ describe Oystercard do
       subject.top_up(Oystercard::MIN_BALANCE)
       subject.touch_in(station)
       subject.touch_out(exit_station)
-      expect(subject.current_journey).to eq(nil)
+      expect(subject.journey_log.current_journey).to eq(nil)
     end
 
     it 'deduct minimum fare at the end of a journey' do
@@ -73,7 +73,7 @@ describe Oystercard do
       subject.top_up(Oystercard::MIN_BALANCE)
       subject.touch_in(station)
       subject.touch_out(exit_station)
-      expect(subject.journeys).to include({entry_station: station, exit_station: exit_station})
+      expect(subject.journey_log.journeys).to include({entry_station: station, exit_station: exit_station})
     end
   end
 

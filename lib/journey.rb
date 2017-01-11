@@ -18,7 +18,7 @@ class Journey
     if @entry_station==nil || @exit_station == nil
       6
     else
-      1
+      1 + (@entry_station.zone-@exit_station.zone).abs
     end
   end
 end

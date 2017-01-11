@@ -1,15 +1,13 @@
-require "./lib/journey"
 require "./lib/journey_log"
 
 class Oystercard
 MAX_BALANCE = 90
 MIN_BALANCE = 1
-attr_reader :balance, :journeys, :current_journey, :journey_log
+
+attr_reader :balance, :journey_log
 
   def initialize
     @balance = 0
-    @journeys = []
-    @current_journey = nil
     @journey_log = JourneyLog.new
   end
 
@@ -27,8 +25,8 @@ attr_reader :balance, :journeys, :current_journey, :journey_log
   end
 
   def touch_in(station)
-    self.touch_out(nil) if !journey_log.journey_nil?#if current journey NOT nil, then start a new journey with no entry point
-    raise "Unsuffient balance. Top up to at least #{MIN_BALANCE}!" if below_minimum?
+    self.touch_out(nil) if !journey_log.journey_nil?
+    raise "Insufficient balance. Top up to at least #{MIN_BALANCE}!" if below_minimum?
     @journey_log.start_journey(station)
   end
 
