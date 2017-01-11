@@ -1,14 +1,16 @@
 require "./lib/journey"
+require "./lib/journey_log"
 
 class Oystercard
 MAX_BALANCE = 90
 MIN_BALANCE = 1
-attr_reader :balance, :journeys, :current_journey
+attr_reader :balance, :journeys, :current_journey, :journey_log
 
   def initialize
     @balance = 0
     @journeys = []
     @current_journey = nil
+    @journey_log = JourneyLog.new
   end
 
   def top_up(money)
@@ -25,15 +27,15 @@ attr_reader :balance, :journeys, :current_journey
   end
 
   def touch_in(station)
-    self.touch_out(nil) if !journey_nil?#if current journey NOT nil, then start a new journey with no entry point
+    self.touch_out(nil) if !journey_log.journey_nil?#if current journey NOT nil, then start a new journey with no entry point
     raise "Unsuffient balance. Top up to at least #{MIN_BALANCE}!" if below_minimum?
-    @current_journey = Journey.new(station)
+    @journey_log.start_journey(station)
   end
 
   def touch_out(exit_station)
     check_and_end_journey(exit_station)
-    deduct(current_journey.fare)
-    update_history
+    deduct(journey_log.current_journey.fare)
+    journey_log.reset_journey
   end
 
 
@@ -42,17 +44,8 @@ attr_reader :balance, :journeys, :current_journey
     @balance -= fare
   end
 
-  def journey_nil?
-    @current_journey == nil
-  end
-
-  def update_history
-    @journeys << {entry_station: current_journey.entry_station, exit_station: current_journey.exit_station}
-    @current_journey = nil
-  end
-
   def check_and_end_journey(exit_station)
-    @current_journey = Journey.new(nil) if journey_nil?
-    @current_journey.finish(exit_station)
+    journey_log.start_journey(nil) if journey_log.journey_nil?
+    journey_log.end_journey(exit_station)
   end
 end
